@@ -67,7 +67,7 @@ consume a segment with a string that doesn't match:
 
 >> s.curr
 => "/users/42"
-```ruby
+```
 
 As you can see, the command fails and the `prev` and
 `curr` strings are not altered. Now we'll see
@@ -106,7 +106,7 @@ how to capture segment values:
 
 >> captures
 => {:foo=>"users", :bar=>42}
-```ruby
+```
 
 Installation
 ------------
