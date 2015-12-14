@@ -37,14 +37,6 @@ class Seg
     @path[0, @pos - 1]
   end
 
-  def find(index)
-    @path[@pos + index]
-  end
-
-  def subs(length)
-    @path[@pos, length]
-  end
-
   def move(offset)
     @pos += offset.succ
   end
@@ -54,31 +46,41 @@ class Seg
   end
 
   def consume(str)
-    return false if root?
-
-    len = str.size
-
-    case find(len)
-    when nil, SLASH
-      if subs(len) == str
-        move(len)
-        return true
-      else
-        return false
-      end
+    if segments_left? && full_segments?(str) && match?(str)
+      move(str.size)
+      true
     else
-      return false
+      false
     end
   end
 
   def capture(sym, store)
-    return false if root?
+    if segments_left?
+      segment = determine_segment
+      store[sym] = segment
+      move(segment.size)
+      true
+    else
+      false
+    end
+  end
 
+  private
+
+  def segments_left?
+    !root?
+  end
+
+  def determine_segment
     len = (@path.index(SLASH, @pos) || @size) - @pos
+    @path[@pos, len]
+  end
 
-    store[sym] = @path[@pos, len]
-    move(len)
+  def full_segments?(str)
+    [nil, SLASH].include?(@path[@pos + str.size])
+  end
 
-    return true
+  def match?(str)
+    @path[@pos, str.size] == str
   end
 end
