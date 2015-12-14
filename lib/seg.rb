@@ -29,10 +29,6 @@ class Seg
     @pos = 1
   end
 
-  def head
-    @path[@pos]
-  end
-
   def curr
     @path[@pos - 1, @size]
   end

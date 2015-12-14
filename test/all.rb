@@ -4,26 +4,32 @@ test "consume" do
   assert_equal segment.consume("bar"), false
   assert_equal segment.prev, ""
   assert_equal segment.curr, "/foo/bar/baz"
+  assert !segment.root?
+
+  assert_equal segment.consume("fo"), false
+  assert_equal segment.prev, ""
+  assert_equal segment.curr, "/foo/bar/baz"
+  assert !segment.root?
 
   assert_equal segment.consume("foo"), true
   assert_equal segment.prev, "/foo"
   assert_equal segment.curr, "/bar/baz"
+  assert !segment.root?
 
   assert_equal segment.consume("foo"), false
   assert_equal segment.prev, "/foo"
   assert_equal segment.curr, "/bar/baz"
+  assert !segment.root?
 
-  assert_equal segment.consume("bar"), true
-  assert_equal segment.prev, "/foo/bar"
-  assert_equal segment.curr, "/baz"
-
-  assert_equal segment.consume("baz"), true
+  assert_equal segment.consume("bar/baz"), true
   assert_equal segment.prev, "/foo/bar/baz"
   assert_equal segment.curr, ""
+  assert segment.root?
 
   assert_equal segment.consume("baz"), false
   assert_equal segment.prev, "/foo/bar/baz"
   assert_equal segment.curr, ""
+  assert segment.root?
 end
 
 test "capture" do
@@ -34,18 +40,22 @@ test "capture" do
   assert_equal segment.capture(:c1, captures), true
   assert_equal segment.prev, "/foo"
   assert_equal segment.curr, "/bar/baz"
+  assert !segment.root?
 
   assert_equal segment.capture(:c2, captures), true
   assert_equal segment.prev, "/foo/bar"
   assert_equal segment.curr, "/baz"
+  assert !segment.root?
 
   assert_equal segment.capture(:c3, captures), true
   assert_equal segment.prev, "/foo/bar/baz"
   assert_equal segment.curr, ""
+  assert segment.root?
 
   assert_equal segment.capture(:c4, captures), false
   assert_equal segment.prev, "/foo/bar/baz"
   assert_equal segment.curr, ""
+  assert segment.root?
 
   assert_equal "foo", captures[:c1]
   assert_equal "bar", captures[:c2]
