@@ -17,11 +17,7 @@ test "consume" do
   assert_equal segment.prev, "/foo"
   assert_equal segment.curr, "/bar/baz"
 
-  assert_equal segment.consume("bar"), true
-  assert_equal segment.prev, "/foo/bar"
-  assert_equal segment.curr, "/baz"
-
-  assert_equal segment.consume("baz"), true
+  assert_equal segment.consume("bar/baz"), true
   assert_equal segment.prev, "/foo/bar/baz"
   assert_equal segment.curr, ""
 
