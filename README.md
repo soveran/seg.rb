@@ -108,6 +108,39 @@ how to capture segment values:
 => {:foo=>"users", :bar=>42}
 ```
 
+It is also possible to `extract` the next segment from the path.
+The method `extract` returns the next segment, if available, or nil
+otherwise:
+
+```ruby
+>> s = Seg.new("/users/42")
+=> #<Seg ...>
+
+>> s.prev
+=> ""
+
+>> s.curr
+=> "/users/42"
+
+>> s.extract
+=> "users"
+
+>> s.prev
+=> "/users"
+
+>> s.curr
+=> "/42"
+
+>> s.extract
+=> "42"
+
+>> s.prev
+=> "/users/42"
+
+>> s.curr
+=> ""
+```
+
 Installation
 ------------
 
