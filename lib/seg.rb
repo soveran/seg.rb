@@ -82,12 +82,11 @@ class Seg
     end
   end
 
-  def capture(sym, store)
-    v = succ
+  def capture(key, store)
+    str = succ
 
-    if v
-      store[sym] = v
-
+    if str
+      store[key] = str
       return true
     else
       return false
