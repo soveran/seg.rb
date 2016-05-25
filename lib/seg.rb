@@ -41,8 +41,8 @@ class Seg
     @path[@pos + index]
   end
 
-  def subs(length)
-    @path[@pos, length]
+  def subs(len)
+    @path[@pos, len]
   end
 
   def move(offset)
