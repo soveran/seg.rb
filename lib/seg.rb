@@ -53,7 +53,7 @@ class Seg
     @pos >= @size
   end
 
-  def succ
+  def extract
     return nil if root?
 
     len = (@path.index(SLASH, @pos) || @size) - @pos
@@ -83,7 +83,7 @@ class Seg
   end
 
   def capture(key, store)
-    str = succ
+    str = extract
 
     if str
       store[key] = str
