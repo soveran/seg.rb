@@ -24,60 +24,64 @@ class Seg
   SLASH = "/".freeze
 
   def initialize(path)
-    @path = path
-    @size = path.size
-    @pos = 1
+    @path = path || SLASH
+    @size = @path.size
+    @init = 0
+    @pos  = 0
   end
 
   def curr
-    @path[@pos - 1, @size]
+    @path[@pos, @size - @pos]
   end
 
   def prev
-    @path[0, @pos - 1]
-  end
-
-  def find(index)
-    @path[@pos + index]
-  end
-
-  def subs(len)
-    @path[@pos, len]
-  end
-
-  def move(offset)
-    @pos += offset.succ
+    @path[@init, @pos]
   end
 
   def root?
-    @pos >= @size
+    @size <= @pos.succ
+  end
+
+  def init?
+    @init == @pos
   end
 
   def extract
     return nil if root?
 
-    len = (@path.index(SLASH, @pos) || @size) - @pos
-    res = subs(len)
+    offs = @pos.succ
+    @pos = @path.index(SLASH, offs) || @size
 
-    move(len)
+    return @path[offs, @pos - offs]
+  end
 
-    res
+  def retract
+    return nil if init?
+
+    offs = @pos.pred
+    @pos = @path.rindex(SLASH, offs)
+
+    return @path[@pos.succ, offs - @pos]
   end
 
   def consume(str)
-    return false if root?
+    orig = @pos
 
-    len = str.size
-
-    case find(len)
-    when nil, SLASH
-      if subs(len) == str
-        move(len)
-        return true
-      else
-        return false
-      end
+    if str == extract
+      return true
     else
+      @pos = orig
+      return false
+    end
+  end
+
+  def restore(str)
+    orig = @pos
+
+    if str == retract
+      return true
+    else
+      @pos = orig
       return false
     end
   end

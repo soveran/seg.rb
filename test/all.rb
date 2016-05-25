@@ -1,3 +1,89 @@
+test "nil" do
+  segment = Seg.new(nil)
+
+  assert_equal segment.prev, ""
+  assert_equal segment.curr, "/"
+  assert segment.root?
+end
+
+test "root" do
+  segment = Seg.new("/")
+
+  assert_equal segment.prev, ""
+  assert_equal segment.curr, "/"
+  assert segment.root?
+end
+
+test "init" do
+  segment = Seg.new("/")
+
+  assert segment.init?
+  assert segment.root?
+
+  segment = Seg.new("/foo")
+
+  assert segment.init?
+  assert !segment.root?
+
+  assert_equal segment.extract, "foo"
+
+  assert !segment.init?
+  assert segment.root?
+end
+
+test "extract" do
+  segment = Seg.new("/foo/bar/baz")
+
+  assert_equal segment.extract, "foo"
+  assert_equal segment.prev, "/foo"
+  assert_equal segment.curr, "/bar/baz"
+  assert !segment.root?
+
+  assert_equal segment.extract, "bar"
+  assert_equal segment.prev, "/foo/bar"
+  assert_equal segment.curr, "/baz"
+  assert !segment.root?
+
+  assert_equal segment.extract, "baz"
+  assert_equal segment.prev, "/foo/bar/baz"
+  assert_equal segment.curr, ""
+  assert segment.root?
+
+  assert_equal segment.extract, nil
+  assert_equal segment.prev, "/foo/bar/baz"
+  assert_equal segment.curr, ""
+  assert segment.root?
+end
+
+test "retract" do
+  segment = Seg.new("/foo/bar/baz")
+
+  3.times { segment.extract }
+
+  assert_equal segment.prev, "/foo/bar/baz"
+  assert_equal segment.curr, ""
+
+  assert_equal segment.retract, "baz"
+  assert_equal segment.prev, "/foo/bar"
+  assert_equal segment.curr, "/baz"
+  assert !segment.root?
+
+  assert_equal segment.retract, "bar"
+  assert_equal segment.prev, "/foo"
+  assert_equal segment.curr, "/bar/baz"
+  assert !segment.root?
+
+  assert_equal segment.retract, "foo"
+  assert_equal segment.prev, ""
+  assert_equal segment.curr, "/foo/bar/baz"
+  assert !segment.root?
+
+  assert_equal segment.retract, nil
+  assert_equal segment.prev, ""
+  assert_equal segment.curr, "/foo/bar/baz"
+  assert !segment.root?
+end
+
 test "consume" do
   segment = Seg.new("/foo/bar/baz")
 
@@ -21,7 +107,12 @@ test "consume" do
   assert_equal segment.curr, "/bar/baz"
   assert !segment.root?
 
-  assert_equal segment.consume("bar/baz"), true
+  assert_equal segment.consume("bar"), true
+  assert_equal segment.prev, "/foo/bar"
+  assert_equal segment.curr, "/baz"
+  assert !segment.root?
+
+  assert_equal segment.consume("baz"), true
   assert_equal segment.prev, "/foo/bar/baz"
   assert_equal segment.curr, ""
   assert segment.root?
@@ -30,6 +121,37 @@ test "consume" do
   assert_equal segment.prev, "/foo/bar/baz"
   assert_equal segment.curr, ""
   assert segment.root?
+end
+
+test "restore" do
+  segment = Seg.new("/foo/bar/baz")
+
+  3.times { segment.extract }
+
+  assert_equal segment.restore("foo"), false
+  assert_equal segment.prev, "/foo/bar/baz"
+  assert_equal segment.curr, ""
+  assert segment.root?
+
+  assert_equal segment.restore("baz"), true
+  assert_equal segment.prev, "/foo/bar"
+  assert_equal segment.curr, "/baz"
+  assert !segment.root?
+
+  assert_equal segment.restore("bar"), true
+  assert_equal segment.prev, "/foo"
+  assert_equal segment.curr, "/bar/baz"
+  assert !segment.root?
+
+  assert_equal segment.restore("foo"), true
+  assert_equal segment.prev, ""
+  assert_equal segment.curr, "/foo/bar/baz"
+  assert !segment.root?
+
+  assert_equal segment.restore("foo"), false
+  assert_equal segment.prev, ""
+  assert_equal segment.curr, "/foo/bar/baz"
+  assert !segment.root?
 end
 
 test "capture" do
