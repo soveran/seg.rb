@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "seg"
-  s.version = "1.1.0"
+  s.version = "1.2.0"
   s.summary = %{Segment matcher for paths}
   s.description = %Q{Segment matcher for paths.}
   s.authors = ["Michel Martens"]

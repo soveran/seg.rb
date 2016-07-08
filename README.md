@@ -141,6 +141,82 @@ otherwise:
 => ""
 ```
 
+You can also go back by using the methods `retract` and `restore`,
+which are the antidote to `extract` and `consume` respectively.
+
+Let's see how `retract` works:
+
+```ruby
+>> s = Seg.new("/users/42")
+=> #<Seg ...>
+
+>> s.prev
+=> ""
+
+>> s.curr
+=> "/users/42"
+
+>> s.extract
+=> "users"
+
+>> s.prev
+=> "/users"
+
+>> s.curr
+=> "/42"
+
+>> s.retract
+=> "users"
+
+>> s.prev
+=> ""
+
+>> s.curr
+=> "/users/42"
+```
+
+And now `restore`:
+
+```ruby
+>> s = Seg.new("/users/42")
+=> #<Seg ...>
+
+>> s.prev
+=> ""
+
+>> s.curr
+=> "/users/42"
+
+>> s.extract
+=> "users"
+
+>> s.prev
+=> "/users"
+
+>> s.curr
+=> "/42"
+
+>> s.restore("foo")
+=> false
+
+>> s.restore("users")
+=> true
+
+>> s.prev
+=> ""
+
+>> s.curr
+=> "/users/42"
+```
+
+See also
+--------
+
+[Syro][syro] is a routing library that uses `Seg` for matching the
+request path.
+
+[syro]: http://soveran.github.io/syro/
+
 Installation
 ------------
 

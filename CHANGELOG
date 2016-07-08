@@ -1,3 +1,8 @@
+1.2.0
+
+* Add retract method
+* Add restore method
+
 1.1.0
 
 * Add extract method
